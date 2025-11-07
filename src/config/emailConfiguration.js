@@ -46,7 +46,7 @@ const sendEmail = async (recipient, subject, data) => {
       const resend = new Resend(APP_CONFIG.RESEND_API_KEY);
 
       const result = await resend.emails.send({
-        from: `SafeTrip Safety App <${APP_CONFIG.EMAIL_SERVICE_USER || "noreply@safetrip.com"}>`,
+        from: `SafeTrip Safety App <${APP_CONFIG.RESEND_EMAIL || "noreply@safetrip.com"}>`,
         to: recipient,
         subject,
         html: data,

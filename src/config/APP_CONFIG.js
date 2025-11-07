@@ -26,6 +26,7 @@ dotenv.config();
     EMAIL_SERVICE_PORT: Number(process.env.EMAIL_SERVICE_PORT || 465),
     EMAIL_SERVICE_SMTP_SECURE: process.env.EMAIL_SERVICE_SMTP_SECURE === "true",
     OTP_EXPIRY_TIME_MINS: Number(process.env.OTP_EXPIRY_TIME_MINS ) || 30,
+    RESEND_EMAIL: process.env.RESEND_EMAIL || "onboarding@resend.dev",
     RESEND_API_KEY: process.env.RESEND_API_KEY,
 
     PINO_LOG_LEVEL_CONSOLE: process.env.PINO_LOG_LEVEL_CONSOLE,
