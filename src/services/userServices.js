@@ -121,9 +121,11 @@ async function forgotPasswordService(email, otp, otptime){
 
 
 // Reset password using OTP
-async function resetPasswordService(email, otp=null, newPassword) {
+async function resetPasswordService(email, newPassword) {
   const user = await User.findOne({ where: { email } });
 
+  
+  
   // if (!user) throw new AppError("User account not found", 400);
   
   // if (!user.otp || !user.otpTime) throw new AppError("OTP already used", 400);
