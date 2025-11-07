@@ -6,9 +6,9 @@ import AppError from "../utils/AppError.js";
 let transporter;
 
 // === Create transporter depending on environment ===
-async function initTransporter() {
+export async function initTransporter() {
   try {
-    if (APP_CONFIG.NODE_ENV === "production") {
+    if (APP_CONFIG.NODE_ENV) {
       transporter = nodemailer.createTransport({
         host: APP_CONFIG.EMAIL_SERVICE_SMTP_HOST || "smtp.gmail.com",
         port: APP_CONFIG.EMAIL_SERVICE_PORT || 465,
@@ -17,20 +17,23 @@ async function initTransporter() {
           user: APP_CONFIG.EMAIL_SERVICE_USER,
           pass: APP_CONFIG.EMAIL_SERVICE_APP_PASSWORD,
         },
+        logger: true,
+        debug: true,
       });
-    } else {
-      // Use Ethereal for local testing
-      const testAccount = await nodemailer.createTestAccount();
-      transporter = nodemailer.createTransport({
-        host: "smtp.ethereal.email",
-        port: 587,
-        auth: {
-          user: testAccount.user,
-          pass: testAccount.pass,
-        },
-      });
-      logger.info(`Ethereal test account: ${testAccount.user}`);
-    }
+    } 
+    // else {
+    //   // Use Ethereal for local testing
+    //   const testAccount = await nodemailer.createTestAccount();
+    //   transporter = nodemailer.createTransport({
+    //     host: "smtp.ethereal.email",
+    //     port: 587,
+    //     auth: {
+    //       user: testAccount.user,
+    //       pass: testAccount.pass,
+    //     },
+    //   });
+    //   logger.info(`Ethereal test account: ${testAccount.user}`);
+    // }
 
     await transporter.verify();
     logger.info("Email transporter ready.");
