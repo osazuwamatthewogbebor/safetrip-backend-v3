@@ -8,8 +8,6 @@ import routes from './routes.js';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import errorHandler from "./middleware/errorHandlers.js";
-import { initTransporter } from './config/emailConfiguration.js';
-import sendEmail from "./config/emailConfiguration.js";
 
 dotenv.config();
 
@@ -26,16 +24,6 @@ app.get("/", (req, res) => {
     res.send("SafeTrip API is running...");
 });
 
-// test email
-app.get("/test-email", async (req, res) => {
-  try {
-    await sendEmail("youremail@gmail.com", "SafeTrip Test", "<h2>It works 🎉</h2>");
-    res.send("Email sent successfully!");
-  } catch (err) {
-    res.status(500).send(`Email failed: ${err.message}`);
-  }
-});
-
 // app.use("/api", apiLimiter);
 app.use('/api', routes);
 
@@ -47,36 +35,15 @@ app.use((req, res, next) => {
 app.use(errorHandler)
 
 
-// sequelize.sync()
-//     .then(() => {
-//         logger.info('Database synchronized successfully');
-//     })
-//     .catch((error) => {
-//         console.error('Error synchronizing database:', error);
-//     });
-
-// app.listen(port, () => {
-//     logger.info(`Server is running on port ${port}`)
-// ;});
-
-
-async function startServer() {
-  try {
-    // Initialize DB
-    await sequelize.sync();
-    logger.info("Database synchronized successfully");
-
-    // Initialize email transporter (important for logs on Render)
-    await initTransporter();
-
-    // Start server
-    app.listen(port, () => {
-      logger.info(`Server is running on port ${port}`);
+sequelize.sync()
+    .then(() => {
+        logger.info('Database synchronized successfully');
+    })
+    .catch((error) => {
+        console.error('Error synchronizing database:', error);
     });
-  } catch (error) {
-    logger.error(`Startup failed: ${error.message}`);
-    process.exit(1);
-  }
-}
 
-startServer();
+app.listen(port, () => {
+    logger.info(`Server is running on port ${port}`)
+;});
+
