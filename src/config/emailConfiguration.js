@@ -1,14 +1,21 @@
 import nodemailer from "nodemailer";
+import { Resend } from "resend";
 import APP_CONFIG from "./APP_CONFIG.js";
 import logger from "./logger.js";
 import AppError from "../utils/AppError.js";
 
 let transporter;
+let useResend = false;
 
 // === Create transporter depending on environment ===
 export async function initTransporter() {
   try {
-    if (APP_CONFIG.NODE_ENV) {
+    if (APP_CONFIG.NODE_ENV === "production") {
+      // Use Resend in production
+      useResend = true;
+      logger.info("Using Resend email service for production.");
+    } else {
+      // Use local Gmail/Ethereal for development
       transporter = nodemailer.createTransport({
         host: APP_CONFIG.EMAIL_SERVICE_SMTP_HOST || "smtp.gmail.com",
         port: APP_CONFIG.EMAIL_SERVICE_PORT || 465,
@@ -20,23 +27,10 @@ export async function initTransporter() {
         logger: true,
         debug: true,
       });
-    } 
-    // else {
-    //   // Use Ethereal for local testing
-    //   const testAccount = await nodemailer.createTestAccount();
-    //   transporter = nodemailer.createTransport({
-    //     host: "smtp.ethereal.email",
-    //     port: 587,
-    //     auth: {
-    //       user: testAccount.user,
-    //       pass: testAccount.pass,
-    //     },
-    //   });
-    //   logger.info(`Ethereal test account: ${testAccount.user}`);
-    // }
 
-    await transporter.verify();
-    logger.info("Email transporter ready.");
+      await transporter.verify();
+      logger.info("Email transporter ready (SMTP).");
+    }
   } catch (err) {
     logger.error(`Email transporter setup failed: ${err.message}`);
   }
@@ -46,6 +40,31 @@ export async function initTransporter() {
 initTransporter();
 
 const sendEmail = async (recipient, subject, data) => {
+  if (useResend) {
+    // Use Resend API instead of Nodemailer
+    try {
+      const resend = new Resend(APP_CONFIG.RESEND_API_KEY);
+
+      const result = await resend.emails.send({
+        from: `SafeTrip Safety App <${APP_CONFIG.EMAIL_SERVICE_USER || "noreply@safetrip.com"}>`,
+        to: recipient,
+        subject,
+        html: data,
+      });
+
+      if (result.error) {
+        throw new Error(result.error.message);
+      }
+
+      logger.info(`Email sent via Resend: ${result.data?.id || "No ID"}`);
+      return;
+    } catch (err) {
+      logger.error(`Resend send failed: ${err.message}`);
+      throw new AppError("Failed to send email via Resend", 500);
+    }
+  }
+
+  // === Fallback: SMTP (local/dev only)
   if (!transporter) {
     throw new AppError("Email transporter not initialized", 500);
   }
