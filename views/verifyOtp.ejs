@@ -1,11 +1,22 @@
-<%- include('includes/header.ejs', { subject: 'Verify Your Account' }) %>
+<%- include('includes/header.ejs', { subject: 'Activate Your SafeTrip Account' }) %>
 
-<p>Hi <strong><%= user %></strong>,</p>
+  <div style="padding: 32px 24px; text-align: center;">
+    <p style="font-size: 16px; margin-bottom: 16px;">Hello <strong><%= user %></strong>,</p>
+    <p style="font-size: 15px; color: #555; margin-bottom: 24px;">
+      Thank you for joining <strong>SafeTrip</strong>. To ensure your account is secure, please use the verification code below:
+    </p>
 
-<p>Thank you for signing up! Please use the following OTP to verify your account: </p>
+    <div style="background: #fff; border: 1px solid #e4e6eb; border-radius: 12px; padding: 16px; width: fit-content; margin: 0 auto 20px;">
+      <h2 style="margin: 0; color: #3ab795; font-size: 32px; letter-spacing: 2px;"><%= otp %></h2>
+    </div>
 
-<h2 style="text-align: center; color: #007bff;"><%= otp %></h2>
-
-<p>This code will expire in <%= otpTimeMins %> minutes. Do not share it with anyone.</p>
-
-<%- include('includes/footer.ejs') %>
+    <p style="color: #777; font-size: 14px; margin-bottom: 12px;">
+      This code is valid for the next <%= otpTimeMins %> minutes.
+    </p>
+    <p style="font-size: 14px; color: #555;">
+      For your security, never share this code with anyone. Once verified, you'll have full access to SafeTrip features, including real-time travel alerts and location safety tracking.
+    </p>
+  </div>
+  <%- include('includes/footer.ejs') %>
+  
+</div>

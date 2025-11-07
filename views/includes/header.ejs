@@ -12,27 +12,45 @@
       margin: 0;
       padding: 0;
     }
+
     .container {
       width: 90%;
       max-width: 600px;
       margin: 30px auto;
       background-color: #ffffff;
-      border-radius: 10px;
+      border-radius: 16px;
       overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.04);
     }
+
     .header {
-      background-color: #007bff;
+      background: linear-gradient(135deg, #3ab795, #36d1dc);
       color: #ffffff;
       text-align: center;
-      padding: 20px;
-      font-size: 22px;
-      font-weight: bold;
+      padding: 32px 24px;
     }
+
+    .header img {
+      margin-bottom: 8px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    .header p {
+      margin: 6px 0 0;
+      opacity: 0.9;
+      font-size: 14px;
+    }
+
     .content {
       padding: 25px;
       line-height: 1.6;
     }
+
     .footer {
       background-color: #f1f1f1;
       text-align: center;
@@ -40,9 +58,10 @@
       font-size: 13px;
       color: #666;
     }
+
     a.button {
       display: inline-block;
-      background-color: #007bff;
+      background: linear-gradient(135deg, #3ab795, #36d1dc);
       color: #fff;
       padding: 10px 20px;
       text-decoration: none;
@@ -53,5 +72,8 @@
 </head>
 <body>
   <div class="container">
-    <div class="header">Smart AI Jobber</div>
-    <div class="content">
+    <div class="header">
+  <img src="https://img.icons8.com/ios-filled/50/ffffff/security-checked.png" width="48" height="48" alt="SafeTrip Icon">
+  <h1>SafeTrip Notification</h1>
+  <p>Stay informed and secure on every journey with SafeTrip.</p>
+</div>

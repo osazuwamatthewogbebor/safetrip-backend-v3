@@ -1,16 +1,27 @@
-<%- include('includes/header.ejs', { subject: 'Welcome to Smart AI Jobber!' }) %>
+<%- include('includes/header.ejs', { subject: 'Welcome to SafeTrip!' }) %>
 
-<p>Hi <strong><%= user %></strong>,</p>
+<div style="padding: 25px; font-family: 'Inter', 'Segoe UI', sans-serif; line-height: 1.6; max-width: 600px; margin: 0 auto;">
 
-<p>Welcome to <strong>Safe Trip</strong> — we're thrilled to have you!</p>
+  <p style="font-size: 16px;">Hi <strong><%= user %></strong>,</p>
 
-<p>You can now explore opportunities, get <strong>AI-Powered Job Recommendations</strong> 
-    straight to your inbox and get the most out of our platform.
-</p>
-<p>Ensure you add this email account to your inbox so you don't miss out on mouth-watering job opportunities</p>
-<p>Start your journey by visiting your dashboard:</p>
-<p style="text-align:center;">
-  <a href="https://smartaijobber.com/dashboard" class="button">Go to Dashboard</a>
-</p>
+  <p style="font-size: 16px;">
+    Welcome to <strong>SafeTrip</strong>, we’re excited to have you on board!
+  </p>
+
+  <p style="font-size: 15px; color: #555;">
+    With SafeTrip, you can now explore travel safety alerts, real-time location updates, and other features designed to make your journeys safer and more connected.
+  </p>
+
+  <p style="font-size: 15px; color: #555;">
+    Make sure to add this email address to your inbox so you never miss important updates and alerts.
+  </p>
+
+  <p style="font-size: 15px; color: #555;">Start your journey by visiting your dashboard:</p>
+
+  <p style="text-align: center; margin: 20px 0;">
+    <a href="https://smartaijobber.com/dashboard" style="display: inline-block; background: linear-gradient(135deg, #3ab795, #36d1dc); color: #fff; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-weight: 600;">Go to Dashboard</a>
+  </p>
+
+</div>
 
 <%- include('includes/footer.ejs') %>
