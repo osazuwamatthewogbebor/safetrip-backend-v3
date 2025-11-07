@@ -42,7 +42,7 @@ async function initTransporter() {
 // Run setup on startup
 initTransporter();
 
-export const sendEmail = async (recipient, subject, data) => {
+const sendEmail = async (recipient, subject, data) => {
   if (!transporter) {
     throw new AppError("Email transporter not initialized", 500);
   }
@@ -65,3 +65,5 @@ export const sendEmail = async (recipient, subject, data) => {
     throw new AppError("Failed to send email", 500);
   }
 };
+
+export default sendEmail;
