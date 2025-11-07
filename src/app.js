@@ -24,7 +24,7 @@ app.get("/", (req, res) => {
     res.send("SafeTrip API is running...");
 });
 
-app.use("/api", apiLimiter);
+// app.use("/api", apiLimiter);
 app.use('/api', routes);
 
 //route default
@@ -35,7 +35,7 @@ app.use((req, res, next) => {
 app.use(errorHandler)
 
 
-sequelize.sync({ force: true })
+sequelize.sync()
     .then(() => {
         logger.info('Database synchronized successfully');
     })
