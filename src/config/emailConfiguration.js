@@ -4,14 +4,23 @@ import logger from './logger.js';
 import AppError from '../utils/AppError.js';
 
 
+// const transporter = nodemailer.createTransport({
+//     host: APP_CONFIG.EMAIL_SERVICE_SMTP_HOST,
+//     port: APP_CONFIG.EMAIL_SERVICE_PORT,
+//     secure: APP_CONFIG.EMAIL_SERVICE_SMTP_SECURE,
+//     auth: {
+//         user: APP_CONFIG.EMAIL_SERVICE_USER,
+//         pass: APP_CONFIG.EMAIL_SERVICE_APP_PASSWORD,
+//     },
+// });
+const testAccount = await nodemailer.createTestAccount();
 const transporter = nodemailer.createTransport({
-    host: APP_CONFIG.EMAIL_SERVICE_SMTP_HOST,
-    port: APP_CONFIG.EMAIL_SERVICE_PORT,
-    secure: APP_CONFIG.EMAIL_SERVICE_SMTP_SECURE,
-    auth: {
-        user: APP_CONFIG.EMAIL_SERVICE_USER,
-        pass: APP_CONFIG.EMAIL_SERVICE_APP_PASSWORD,
-    },
+  host: "smtp.ethereal.email",
+  port: 587,
+  auth: {
+    user: testAccount.user,
+    pass: testAccount.pass,
+  },
 });
 
 
