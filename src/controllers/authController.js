@@ -148,7 +148,7 @@ async function changePasswordController(req, res) {
         role: req.user.role
       }
     });
-    user
+
   } catch (error) {
     res.status(400).json({
       success: false,

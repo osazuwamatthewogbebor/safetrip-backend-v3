@@ -8,6 +8,7 @@ import routes from './routes.js';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import errorHandler from "./middleware/errorHandlers.js";
+import { startSelfPing } from './utils/selfPing.js';
 
 dotenv.config();
 
@@ -44,6 +45,9 @@ sequelize.sync()
     });
 
 app.listen(port, () => {
-    logger.info(`Server is running on port ${port}`)
+    logger.info(`Server is running on port ${port}`);
+    startSelfPing();
 ;});
+
+
 
