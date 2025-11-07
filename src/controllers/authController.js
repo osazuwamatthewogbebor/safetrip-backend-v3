@@ -31,7 +31,8 @@ async function registerUser (req, res){
       
       const token = await authHandler.createOTPtoken(user);
 
-      res.status(201).json({Success: true, message:"Verification email sent to your email.", token})
+      res.status(201).json({Success: true, message:"Registration successful, please log ins", token})
+      // res.status(201).json({Success: true, message:"Verification email sent to your email.", token})
       
     } catch (error) {
       logger.error("Registration Error:", error);
@@ -118,8 +119,10 @@ async function forgotPassword(req, res, next) {
 // Reset password using OTP
 async function resetPassword(req, res) {
   try {
-    const { email, otp, newPassword } = req.body;
-    await resetPasswordService(email, otp, newPassword);
+    // const { email, otp, newPassword } = req.body;
+    // await resetPasswordService(email, otp, newPassword);
+    const { email, newPassword } = req.body;
+    await resetPasswordService(email, newPassword);
     
     res.status(201).json({message: "Password reset was successful."});
 

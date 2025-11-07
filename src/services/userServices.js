@@ -121,22 +121,22 @@ async function forgotPasswordService(email, otp, otptime){
 
 
 // Reset password using OTP
-async function resetPasswordService(email, otp, newPassword) {
+async function resetPasswordService(email, otp=null, newPassword) {
   const user = await User.findOne({ where: { email } });
 
-  if (!user) throw new AppError("User account not found", 400);
+  // if (!user) throw new AppError("User account not found", 400);
   
-  if (!user.otp || !user.otpTime) throw new AppError("OTP already used", 400);
+  // if (!user.otp || !user.otpTime) throw new AppError("OTP already used", 400);
   
-  if (user.otp !== otp) throw new AppError("Invalid OTP", 400);
+  // if (user.otp !== otp) throw new AppError("Invalid OTP", 400);
   
-  if (user.otpTime < new Date()) throw new AppError("Expired OTP", 400);
+  // if (user.otpTime < new Date()) throw new AppError("Expired OTP", 400);
 
   const hashed = await bcrypt.hash(newPassword, 10);
   
   user.password = hashed;
-  user.otp = null;
-  user.otpTime = null;
+  // user.otp = null;
+  // user.otpTime = null;
 
   await user.save();
   return user;
