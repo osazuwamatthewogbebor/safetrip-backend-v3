@@ -23,7 +23,6 @@ async function processQueue() {
 
         try {
             await sendEmail(job.recipient, job.subject, job.data, job.name);
-            logger.info(`Email sent to ${job.recipient}`);
 
         } catch (error) {
             logger.error(`Failed to send email to ${job.recipient}`, error.message);

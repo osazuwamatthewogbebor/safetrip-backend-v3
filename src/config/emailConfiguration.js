@@ -35,12 +35,12 @@ async function sendEmail(recipient, subject, data, name) {
 
 request
     .then((result) => {
-        logger.info(result.body)
+        logger.info(`Email sent to ${recipient}`);
+        logger.info(result.body.Status, result.body.To[0]);
     })
     .catch((err) => {
         logger.error(err.statusCode)
     })
-  
   
 }
 

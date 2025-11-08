@@ -29,11 +29,11 @@ app.get("/", (req, res) => {
 });
 
 
-app.post("/test-email", (req, res) => {
-    const {recipientEmail, name, message} = req.body;
-    enqueueEmail(recipientEmail, "Testing with endpoint", `<h3>${message}</h3>` || `<h3>Dear ${name}, welcome to SafeTrip. May the force be with you!`, name);
+app.get("/test-email/:email", (req, res) => {
+    const {email} = req.params;
+    enqueueEmail(email, "Testing with endpoint", `<h3>Welcome to SafeTrip. May the force be with you!`);
     
-    res.send("Check your spam as well")
+    res.send("Test email sent. Check your spam as well")
 })
 
 // app.use("/api", apiLimiter);
