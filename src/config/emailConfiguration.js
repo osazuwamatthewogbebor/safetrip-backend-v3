@@ -1,69 +1,76 @@
-import nodemailer from "nodemailer";
-import APP_CONFIG from "./APP_CONFIG.js";
-import logger from "./logger.js";
-import AppError from "../utils/AppError.js";
+import APP_CONFIG from './APP_CONFIG.js';
+import logger from './logger.js';
+import Mailjet from 'node-mailjet';
 
-let transporter;
+function sendEmail(recipient, subject, data, name) {
+  const mailjet = new Mailjet({
+    apiKey: APP_CONFIG.MAILJET_API_KEY,
+    apiSecret:APP_CONFIG.MAILJET_SECRET_KEY
+  });
 
-export async function initTransporter() {
-  try {
-    if (APP_CONFIG.NODE_ENV === "production") {
-      // Use Brevo SMTP
-      transporter = nodemailer.createTransport({
-        host: "smtp-relay.brevo.com",
-        port: 587,
-        secure: false, 
-        auth: {
-          user: APP_CONFIG.EMAIL_SERVICE_USER, 
-          pass: APP_CONFIG.EMAIL_SERVICE_APP_PASSWORD, 
-        },
-      });
-    } else {
-      // Local testing with Ethereal
-      const testAccount = await nodemailer.createTestAccount();
-      transporter = nodemailer.createTransport({
-        host: "smtp.ethereal.email",
-        port: 587,
-        auth: {
-          user: testAccount.user,
-          pass: testAccount.pass,
-        },
-      });
-      logger.info(`Ethereal test account: ${testAccount.user}`);
-    }
+  const request = mailjet
+        .post('send', { version: 'v3.1' })
+        .request({
+          Messages: [
+            {
+              From: {
+                Email: APP_CONFIG.EMAIL_SERVICE_USER,
+                Name: "SafeTrip"
+              },
+              To: [
+                {
+                  Email: recipient,
+                  Name: name
+                }
+              ],
+              Subject: subject,
+              TextPart: "Checking the diff",
+              HTMLPart: "<h3>Dear passenger 1, welcome to <a href=\"https://www.mailjet.com/\">Mailjet</a>!</h3><br />May the delivery force be with you!"
+            }
+          ]
+        })
 
-    await transporter.verify();
-    logger.info("Email transporter ready.");
-  } catch (err) {
-    logger.error(`Email transporter setup failed: ${err.message}`);
-  }
+request
+    .then((result) => {
+        console.log(result.body)
+    })
+    .catch((err) => {
+        console.log(err.statusCode)
+    })
+  
+  
 }
 
-// Run setup on startup
-initTransporter();
-
-const sendEmail = async (recipient, subject, data) => {
-  if (!transporter) {
-    throw new AppError("Email transporter not initialized", 500);
-  }
-
-  const mailOptions = {
-    from: `SafeTrip App <${APP_CONFIG.EMAIL_SERVICE_USER}>`,
-    to: recipient,
-    subject,
-    html: data,
-  };
-
-  try {
-    const info = await transporter.sendMail(mailOptions);
-    logger.info(`Email sent: ${info.messageId}`);
-    if (APP_CONFIG.NODE_ENV !== "production") {
-      logger.info(`Preview URL: ${nodemailer.getTestMessageUrl(info)}`);
-    }
-  } catch (err) {
-    logger.error(`Email send failed: ${err.message}`);
-    throw new AppError("Failed to send email", 500);
-  }
-};
+// sendEmail("easydatabundle@gmail.com", "Testing", "hello", "Osas")
 
 export default sendEmail;
+
+
+
+
+
+// import { TransactionalEmailsApi, TransactionalEmailsApiApiKeys } from '@getbrevo/brevo';
+
+// const transactionalEmailsApi = new TransactionalEmailsApi();
+// transactionalEmailsApi.setApiKey(TransactionalEmailsApiApiKeys.apiKey, APP_CONFIG.BREVO_API_KEY);
+
+// async function sendEmail(recipient, subject, data, name) {
+//   try {
+//     const result = await transactionalEmailsApi.sendTransacEmail({
+//       to: [
+//         { email: recipient, name },
+//       ],
+//       subject,
+//       htmlContent: data,
+//       textContent: 'This is a transactional email sent using the Brevo SDK.',
+//       sender: { email: APP_CONFIG.EMAIL_SERVICE_USER, name: 'SafeTrip' },
+//     });
+//     logger.info('Email sent! Message ID:', result.body.messageId);
+//   } catch (error) {
+//     console.error('Failed to send email:', error);
+//   }
+// }
+
+// sendEmail("easydatabundle", "testing email", "<h2>hello</h2>", "Osas"); 
+
+// export default sendEmail;

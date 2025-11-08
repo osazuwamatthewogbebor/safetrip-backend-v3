@@ -26,7 +26,9 @@ dotenv.config();
     EMAIL_SERVICE_PORT: Number(process.env.EMAIL_SERVICE_PORT || 587),
     EMAIL_SERVICE_SMTP_SECURE: process.env.EMAIL_SERVICE_SMTP_SECURE === "false",
     OTP_EXPIRY_TIME_MINS: Number(process.env.OTP_EXPIRY_TIME_MINS ) || 30,
-
+    BREVO_API_KEY: process.env.BREVO_API_KEY,
+    MAILJET_API_KEY: process.env.MAILJET_API_KEY,
+    MAILJET_SECRET_KEY: process.env.MAILJET_SECRET_KEY,
 
     PINO_LOG_LEVEL_CONSOLE: process.env.PINO_LOG_LEVEL_CONSOLE,
     PINO_LOG_LEVEL_FILE: process.env.PINO_LOG_LEVEL_FILE,

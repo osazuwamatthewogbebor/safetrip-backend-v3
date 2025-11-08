@@ -9,6 +9,7 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import errorHandler from "./middleware/errorHandlers.js";
 import { startSelfPing } from './utils/selfPing.js';
+import sendEmail from './config/emailConfiguration.js';
 
 dotenv.config();
 
@@ -24,6 +25,12 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
     res.send("SafeTrip API is running...");
 });
+
+app.get("/test-email", (req, res) => {
+    sendEmail("easydatabundle@gmail.com", "Testing with endpoint", "hello", "Osas");
+    
+    res.send("Check your spam as well")
+})
 
 // app.use("/api", apiLimiter);
 app.use('/api', routes);
