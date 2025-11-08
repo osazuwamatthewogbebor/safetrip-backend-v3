@@ -32,10 +32,10 @@ async function createUser (userData) {
 async function verifyUser(email, otp) {
   const user = await User.findOne({ where: { email } });
 
-  if (!user) return null;
-  if (!user.otp || !user.otpTime) return "missing";
-  if (user.otp !== otp) return "invalid";
-  if (user.otpTime < new Date()) return "expired";
+  if (!user) throw new AppError("User account not found", 400);
+  if (!user.otp || !user.otpTime) throw new AppError("OTP already used or missing", 400);
+  if (user.otp !== otp) throw new AppError("Invalid OTP", 400);
+  if (user.otpTime < new Date()) throw new AppError("OTP Expired", 400);
  
   user.verified = true;
   user.otp = null;
@@ -119,10 +119,10 @@ async function forgotPasswordService(email, otp, otptime){
 async function resetPasswordService(email, otp, newPassword) {
   const user = await User.findOne({ where: { email } });
 
-  if (!user) return null;
-  if (!user.otp || !user.otpTime) return "missing";
-  if (user.otp !== otp) return "invalid";
-  if (user.otpTime < new Date()) return "expired";
+  if (!user) throw new AppError("User account not found", 400);
+  if (!user.otp || !user.otpTime) throw new AppError("OTP already used or missing", 400);
+  if (user.otp !== otp) throw new AppError("Invalid OTP", 400);
+  if (user.otpTime < new Date()) throw new AppError("OTP Expired", 400);
 
   const hashed = await bcrypt.hash(newPassword, 10);
   
