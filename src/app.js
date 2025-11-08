@@ -11,6 +11,7 @@ import cookieParser from 'cookie-parser';
 import errorHandler from "./middleware/errorHandlers.js";
 import { startSelfPing } from './utils/selfPing.js';
 import enqueueEmail from './utils/emailQueue.js';
+import { initTransporter } from './config/emailConfiguration.js';
 
 
 dotenv.config();
@@ -55,8 +56,9 @@ sequelize.sync()
         console.error('Error synchronizing database:', error);
     });
 
-app.listen(port, () => {
+app.listen(port, async () => {
     logger.info(`Server is running on port ${port}`);
+    await initTransporter();
     startSelfPing();
 ;});
 

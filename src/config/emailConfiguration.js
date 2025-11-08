@@ -1,48 +1,56 @@
-import APP_CONFIG from './APP_CONFIG.js';
-import logger from './logger.js';
-import Mailjet from 'node-mailjet';
+import nodemailer from "nodemailer";
+import APP_CONFIG from "./APP_CONFIG.js";
+import logger from "./logger.js";
+import AppError from "../utils/AppError.js";
 
 
-async function sendEmail(recipient, subject, data, name) {
-  const mailjet = new Mailjet({
-    apiKey: APP_CONFIG.MAILJET_API_KEY,
-    apiSecret:APP_CONFIG.MAILJET_SECRET_KEY
+let transporter;
+
+
+export async function initTransporter() {
+  transporter = nodemailer.createTransport({
+    host: APP_CONFIG.EMAIL_SERVICE_SMTP_HOST, 
+    port: APP_CONFIG.EMAIL_SERVICE_PORT || 587,
+    secure: APP_CONFIG.EMAIL_SERVICE_PORT === 465,
+    auth: {
+      user: "apikey",
+      pass: APP_CONFIG.SENDGRID_API_KEY,
+    },
   });
 
-  logger.info(`Email server is sending email...`);
+  try {
+    await transporter.verify();
+    logger.info('Email transporter verified and ready to send messages.');
+  } catch (err) {
+    logger.error('Email transporter verification failed:', err.message);
+  }
 
-
-  const request = mailjet
-        .post('send', { version: 'v3.1' })
-        .request({
-          Messages: [
-            {
-              From: {
-                Email: APP_CONFIG.EMAIL_SERVICE_USER,
-                Name: "SafeTrip"
-              },
-              To: [
-                {
-                  Email: recipient,
-                  Name: name
-                }
-              ],
-              Subject: subject,
-              HTMLPart: data
-            }
-          ]
-        })
-
-request
-    .then((result) => {
-        logger.info(`Email sent to ${recipient}`);
-        logger.info(result.body.Status, result.body.To[0]);
-    })
-    .catch((err) => {
-        logger.error(err.statusCode)
-    })
-  
 }
 
-export default sendEmail;
+async function sendEmail(recipient, subject, data, name) {
 
+  if (!transporter) {
+    throw new AppError("Email transporter not initialised", 500);
+  };
+  
+  const mailOptions = {
+    from: `"SafeTrip" <${APP_CONFIG.EMAIL_SERVICE_USER}>`,
+    to: {
+      name,
+      address: recipient
+    },
+    subject,
+    html: data
+  };
+  
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    logger.info(`Email sent to ${recipient}!`,info.message, );
+  } catch (err) {
+    logger.error(`Email send failed: ${err.message}`);
+    throw new AppError("Failed to send email", 500);
+  };
+
+};
+
+export default sendEmail;
