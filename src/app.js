@@ -9,7 +9,8 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import errorHandler from "./middleware/errorHandlers.js";
 import { startSelfPing } from './utils/selfPing.js';
-import sendEmail from './config/emailConfiguration.js';
+import enqueueEmail from './utils/emailQueue.js';
+
 
 dotenv.config();
 
@@ -27,7 +28,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/test-email", (req, res) => {
-    sendEmail("easydatabundle@gmail.com", "Testing with endpoint", "hello", "Osas");
+    enqueueEmail("easydatabundle@gmail.com", "Testing with endpoint", "<h3>Dear passenger 1, welcome to <a href=\"https://www.mailjet.com/\">Mailjet</a>!</h3><br />May the delivery force be with you!", "Osas");
     
     res.send("Check your spam as well")
 })
