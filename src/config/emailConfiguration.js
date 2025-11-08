@@ -2,13 +2,15 @@ import APP_CONFIG from './APP_CONFIG.js';
 import logger from './logger.js';
 import Mailjet from 'node-mailjet';
 
-function sendEmail(recipient, subject, data, name) {
+
+async function sendEmail(recipient, subject, data, name) {
   const mailjet = new Mailjet({
     apiKey: APP_CONFIG.MAILJET_API_KEY,
     apiSecret:APP_CONFIG.MAILJET_SECRET_KEY
   });
 
   logger.info(`Email server is sending email...`);
+
 
   const request = mailjet
         .post('send', { version: 'v3.1' })

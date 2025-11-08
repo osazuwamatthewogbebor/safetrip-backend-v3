@@ -9,12 +9,10 @@ import  {
   changePassword,
 } from "../services/userServices.js";
 import { getOtp, getOtpExpiryTime } from "../utils/otpGen.js";
-import { validationResult } from "express-validator";
 import APP_CONFIG from "../config/APP_CONFIG.js";
 import logger from "../config/logger.js";
 import emailService from "../services/emailService.js";
 import authHandler from "../utils/authHandler.js";
-
 
 
 async function registerUser (req, res){
@@ -25,14 +23,13 @@ async function registerUser (req, res){
       const otpTimeMins = APP_CONFIG.OTP_EXPIRY_TIME_MINS;
       const otpTime = getOtpExpiryTime(otpTimeMins);
 
-      const user = await createUser({username, email, password, gender, phoneNumber, role, otp, otpTime});
+      const user = await createUser({username, email, password, gender, phoneNumber: String(phoneNumber), role, otp, otpTime});
 
       await emailService.sendOtp(user.email, "Verify your account", user.username, otp, otpTimeMins);
       
       const token = await authHandler.createOTPtoken(user);
 
-      res.status(201).json({Success: true, message:"Registration successful, please log ins", token})
-      // res.status(201).json({Success: true, message:"Verification email sent to your email.", token})
+      res.status(201).json({Success: true, message:"Verification email sent to your inbox. Check your inbox, promotions and spam folders.", token})
       
     } catch (error) {
       logger.error("Registration Error:", error);
@@ -44,17 +41,22 @@ async function registerUser (req, res){
 async function verifyEmail (req, res) {
   try {
     const { email, otp } = req.body;
-    const user = await verifyUser(email, otp);
-    if (!user) return res.status(400).json({ error: "Invalid OTP" });
-    
+    const user = await verifyUser(email, String(otp));
+
+    if (!user) return res.status(400).json({ error: "User account not found" });
+    if (user === "missing") return res.status(400).json({ error: "OTP already used or missing" });
+    if (user === "invalid") return res.status(400).json({ error: "Invalid OTP" });
+    if (user === "expired") return res.status(400).json({ error: "OTP Expired" });
+
     // Send welcome email
     await emailService.sendWelcomeEmail(user.email, 'Welcome to Safe Trip!', user.username);
-  
+    
+    res.status(200).json({ message: "Account verification was successful" });
+
   } catch (error) {
     logger.error(error.message);
     throw new AppError(error.nessage, 500);
   };
-  res.status(200).json({ message: "Account verification was successful" });
 };
 
 
@@ -77,7 +79,7 @@ async function resendOtp(req, res) {
     throw new AppError(error.nessage, 500);
   };
 
-   res.status(201).json({ message: "OTP sent to your email" });
+   res.status(201).json({ message: "OTP sent to your email. Check your inbox, promotions and spam folders." });
 };
 
 
@@ -104,12 +106,12 @@ async function forgotPassword(req, res, next) {
     
     const user = await forgotPasswordService(email, otp, otptime);
     if (!user) {
-      return res.send("If this email is registered, a password reset link will be sent.")   
+      return res.send("If this email is registered, a password reset link will be sent. Check your inbox, promotions and spam folders.")   
     };
 
     await emailService.sendPasswordRecoveryEmail(user.email, "Password Reset Request", user.username, otp, otpTimeMins)
 
-    res.status(200).json({ success: true, message: "Check your email. If this email is registered, a password reset email will be sent." });
+    res.status(200).json({ success: true, message: "Check your email. If this email is registered, a password reset email will be sent. Check your inbox, promotions and spam folders." });
   } catch (err) {
     next(err);
   }
@@ -119,10 +121,13 @@ async function forgotPassword(req, res, next) {
 // Reset password using OTP
 async function resetPassword(req, res) {
   try {
-    // const { email, otp, newPassword } = req.body;
-    // await resetPasswordService(email, otp, newPassword);
-    const { email, newPassword } = req.body;
-    await resetPasswordService(email, newPassword);
+    const { email, otp, newPassword } = req.body;
+    const user = await resetPasswordService(email, String(otp), newPassword);
+
+    if (!user) return res.status(400).json({ error: "User account not found" });
+    if (user === "missing") return res.status(400).json({ error: "OTP already used or missing" });
+    if (user === "invalid") return res.status(400).json({ error: "Invalid OTP" });
+    if (user === "expired") return res.status(400).json({ error: "OTP Expired" });
     
     res.status(201).json({message: "Password reset was successful."});
 

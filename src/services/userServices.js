@@ -31,17 +31,12 @@ async function createUser (userData) {
 // Verify user OTP
 async function verifyUser(email, otp) {
   const user = await User.findOne({ where: { email } });
-  if (!user) throw new AppError("User account not found", 400);
-  
-  if (!user.otp || !user.otpTime) throw new AppError("OTP already used or missin", 400);
-  
-  if (user.otp !== otp) throw new AppError("Invalid OTP", 400);
-  
-  const otpExpiry = new Date(user.otpTime);
-  if (isNaN(otpExpiry.getTime()) || otpExpiry.getTime() < Date.now()) {
-    throw new AppError("Expired OTP", 400);
-  };
-  
+
+  if (!user) return null;
+  if (!user.otp || !user.otpTime) return "missing";
+  if (user.otp !== otp) return "invalid";
+  if (user.otpTime < new Date()) return "expired";
+ 
   user.verified = true;
   user.otp = null;
   user.otpTime = null;
@@ -121,24 +116,19 @@ async function forgotPasswordService(email, otp, otptime){
 
 
 // Reset password using OTP
-async function resetPasswordService(email, newPassword) {
+async function resetPasswordService(email, otp, newPassword) {
   const user = await User.findOne({ where: { email } });
 
-  
-  
-  // if (!user) throw new AppError("User account not found", 400);
-  
-  // if (!user.otp || !user.otpTime) throw new AppError("OTP already used", 400);
-  
-  // if (user.otp !== otp) throw new AppError("Invalid OTP", 400);
-  
-  // if (user.otpTime < new Date()) throw new AppError("Expired OTP", 400);
+  if (!user) return null;
+  if (!user.otp || !user.otpTime) return "missing";
+  if (user.otp !== otp) return "invalid";
+  if (user.otpTime < new Date()) return "expired";
 
   const hashed = await bcrypt.hash(newPassword, 10);
   
   user.password = hashed;
-  // user.otp = null;
-  // user.otpTime = null;
+  user.otp = null;
+  user.otpTime = null;
 
   await user.save();
   return user;

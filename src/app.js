@@ -1,3 +1,4 @@
+
 import express from 'express';
 import APP_CONFIG from './config/APP_CONFIG.js';
 import logger from './config/logger.js';
@@ -27,8 +28,10 @@ app.get("/", (req, res) => {
     res.send("SafeTrip API is running...");
 });
 
-app.get("/test-email", (req, res) => {
-    enqueueEmail("easydatabundle@gmail.com", "Testing with endpoint", "<h3>Dear passenger 1, welcome to <a href=\"https://www.mailjet.com/\">Mailjet</a>!</h3><br />May the delivery force be with you!", "Osas");
+
+app.post("/test-email", (req, res) => {
+    const {recipientEmail, name, message} = req.body;
+    enqueueEmail(recipientEmail, "Testing with endpoint", `<h3>${message}</h3>` || `<h3>Dear ${name}, welcome to SafeTrip. May the force be with you!`, name);
     
     res.send("Check your spam as well")
 })
