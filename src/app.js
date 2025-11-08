@@ -31,7 +31,7 @@ app.get("/", (req, res) => {
 
 app.get("/test-email/:email", (req, res) => {
     const {email} = req.params;
-    enqueueEmail(email, "Testing with endpoint", `<h3>Welcome to SafeTrip. May the force be with you!`);
+    enqueueEmail(email, "Testing with endpoint", `<h3>Welcome to SafeTrip. May the force be with you!`, "TestUser");
     
     res.send("Test email sent. Check your spam as well")
 })
