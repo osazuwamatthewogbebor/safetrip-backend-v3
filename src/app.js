@@ -47,7 +47,7 @@ app.use((req, res, next) => {
 app.use(errorHandler)
 
 
-sequelize.sync()
+sequelize.sync({force: true})
     .then(() => {
         logger.info('Database synchronized successfully');
     })
